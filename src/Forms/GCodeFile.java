@@ -5,6 +5,8 @@
  */
 package Forms;
 
+import com.sun.corba.se.impl.logging.ORBUtilSystemException;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -20,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -66,16 +69,77 @@ class GCodeFile {
         }
     }
 
-    
+    CalibrateTask calibrateTask;
+    class CalibrateTask extends SwingWorker<Void, Void> {
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            final double radius = 80;
+            final double zCorr = 1.2;
+            double x = 0;
+            double y = 0;
+            double z;
+            double correction;
+            double origZ = 0;
+
+            int progress;
+            int noOfLines = inList.size();
+
+            final String zRegex = "Z-?[\\d\\.]+";
+            final String yRegex = "Y-?[\\d\\.]+";
+            final String xRegex = "X-?[\\d\\.]+";
+            Pattern zPattern = Pattern.compile(zRegex);
+            Pattern yPattern = Pattern.compile(yRegex);
+            Pattern xPattern = Pattern.compile(xRegex);
+
+            DecimalFormat df = new DecimalFormat("#0.0#");
+
+            int lineNo = 0;
+            Iterator<String> iter = inList.iterator();
+            outList = new ArrayList<>();
+            while (iter.hasNext()) {
+                String line = iter.next();
+                origZ = getCodeIfExist(line, origZ, "Z", zPattern);
+                x = getCodeIfExist(line, x, "X", xPattern);
+                y = getCodeIfExist(line, y, "Y", yPattern);
+                // System.out.println("X" + x + " Y" + y + " Z" + origZ);
+                correction = getCorrection(x, y, radius, zCorr);
+                z = origZ + correction;
+                // System.out.println("Ny Z: " + z);
+                // System.out.println("Före  : " + line);
+                line = replaceZ(line, z, zPattern, df);
+                // System.out.println("Efter : " + line);
+                outList.add(line);
+                progress = lineNo * 100 / noOfLines;
+                lineNo++;
+                setProgress(progress);
+            }
+            return null;
+        }
+        
+        @Override
+        public void done() {
+            setProgress(100);
+        }
+    }
+
+    public void calibrateInBackground(PropertyChangeListener pcl) {
+        calibrateTask = new CalibrateTask();
+        calibrateTask.addPropertyChangeListener(pcl);
+        calibrateTask.execute();
+
+    }
     
     public void calibrate() {
         final double radius = 80;
         final double zCorr = 1.2;
         double x = 0;
         double y = 0;
-        double z = 0;
-        double correction = 0;
+        double z;
+        double correction;
         double origZ = 0;
+        
+        int noOfLines = inList.size();
         
         final String zRegex = "Z-?[\\d\\.]+";
         final String yRegex = "Y-?[\\d\\.]+";
@@ -87,7 +151,7 @@ class GCodeFile {
         DecimalFormat df = new DecimalFormat("#0.0#");
         
         
-        
+        int lineNo = 0;
         Iterator<String> iter = inList.iterator();
         outList = new ArrayList<>();
         while (iter.hasNext()) {
@@ -103,6 +167,7 @@ class GCodeFile {
             line = replaceZ(line, z, zPattern, df);
             System.out.println("Efter : " + line);
             outList.add(line);
+
         }
     }
 

@@ -5,17 +5,21 @@
  */
 package Forms;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 /**
  *
  * @author Mats
  */
-public class MainForm extends javax.swing.JFrame {
+public class MainForm extends javax.swing.JFrame implements PropertyChangeListener {
 
     /**
      * Creates new form MainForm
      */
     public MainForm() {
         initComponents();
+        
     }
 
     /**
@@ -28,7 +32,8 @@ public class MainForm extends javax.swing.JFrame {
     private void initComponents() {
 
         jBtnReadFile = new javax.swing.JButton();
-        jBtnReadFile1 = new javax.swing.JButton();
+        jBtnWriteFile = new javax.swing.JButton();
+        jProgressBar1 = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -39,10 +44,11 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
 
-        jBtnReadFile1.setText("Skriv fil");
-        jBtnReadFile1.addActionListener(new java.awt.event.ActionListener() {
+        jBtnWriteFile.setText("Skriv fil");
+        jBtnWriteFile.setEnabled(false);
+        jBtnWriteFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBtnReadFile1ActionPerformed(evt);
+                jBtnWriteFileActionPerformed(evt);
             }
         });
 
@@ -53,17 +59,21 @@ public class MainForm extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jBtnReadFile1, javax.swing.GroupLayout.DEFAULT_SIZE, 361, Short.MAX_VALUE)
+                    .addComponent(jBtnWriteFile, javax.swing.GroupLayout.DEFAULT_SIZE, 361, Short.MAX_VALUE)
                     .addComponent(jBtnReadFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(707, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 683, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jBtnReadFile, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jBtnReadFile, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jBtnReadFile1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jBtnWriteFile, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(411, Short.MAX_VALUE))
         );
 
@@ -73,14 +83,20 @@ public class MainForm extends javax.swing.JFrame {
     private void jBtnReadFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnReadFileActionPerformed
         gCodeFile = new GCodeFile();
         gCodeFile.readFile();
-        gCodeFile.calibrate();
+        jBtnReadFile.setEnabled(false );
+        gCodeFile.calibrateInBackground( this );
     }//GEN-LAST:event_jBtnReadFileActionPerformed
+    
     private GCodeFile gCodeFile;
 
-    private void jBtnReadFile1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnReadFile1ActionPerformed
+    
+    private void jBtnWriteFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnWriteFileActionPerformed
+        jBtnWriteFile.setEnabled(false);
+        jBtnReadFile.setEnabled(false);
         gCodeFile.saveFile();
-        System.out.println("Ready");
-    }//GEN-LAST:event_jBtnReadFile1ActionPerformed
+        jBtnWriteFile.setEnabled(true);
+        jBtnReadFile.setEnabled(true);
+    }//GEN-LAST:event_jBtnWriteFileActionPerformed
 
     /**
      * @param args the command line arguments
@@ -119,6 +135,19 @@ public class MainForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBtnReadFile;
-    private javax.swing.JButton jBtnReadFile1;
+    private javax.swing.JButton jBtnWriteFile;
+    private javax.swing.JProgressBar jProgressBar1;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void propertyChange(PropertyChangeEvent pce) {
+        if ("progress".equals(pce.getPropertyName()) ) {
+            int progress = (Integer) pce.getNewValue();
+            jProgressBar1.setValue( progress );
+            if (progress == 100 ) {
+                jBtnReadFile.setEnabled(true);
+                jBtnWriteFile.setEnabled(true);
+            }
+        }
+    }
 }

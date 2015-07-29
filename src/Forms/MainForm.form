@@ -26,10 +26,12 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                  <Component id="jBtnReadFile1" pref="361" max="32767" attributes="0"/>
+                  <Component id="jBtnWriteFile" pref="361" max="32767" attributes="0"/>
                   <Component id="jBtnReadFile" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace pref="707" max="32767" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="jProgressBar1" pref="683" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -37,9 +39,12 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jBtnReadFile" min="-2" pref="100" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="jBtnReadFile" min="-2" pref="100" max="-2" attributes="0"/>
+                  <Component id="jProgressBar1" min="-2" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="jBtnReadFile1" min="-2" pref="100" max="-2" attributes="0"/>
+              <Component id="jBtnWriteFile" min="-2" pref="100" max="-2" attributes="0"/>
               <EmptySpace pref="411" max="32767" attributes="0"/>
           </Group>
       </Group>
@@ -54,13 +59,16 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jBtnReadFileActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="jBtnReadFile1">
+    <Component class="javax.swing.JButton" name="jBtnWriteFile">
       <Properties>
         <Property name="text" type="java.lang.String" value="Skriv fil"/>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jBtnReadFile1ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jBtnWriteFileActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JProgressBar" name="jProgressBar1">
     </Component>
   </SubComponents>
 </Form>
