@@ -70,7 +70,7 @@ class GCodeFile {
     
     public void calibrate() {
         final double radius = 80;
-        final double zCorr = 1.3;
+        final double zCorr = 1.2;
         double x = 0;
         double y = 0;
         double z = 0;

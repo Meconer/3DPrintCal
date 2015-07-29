@@ -79,6 +79,7 @@ public class MainForm extends javax.swing.JFrame {
 
     private void jBtnReadFile1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnReadFile1ActionPerformed
         gCodeFile.saveFile();
+        System.out.println("Ready");
     }//GEN-LAST:event_jBtnReadFile1ActionPerformed
 
     /**
